@@ -11,9 +11,9 @@ function TabIcon({ icon, color, name, focused }) {
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className="w-5 h-5"
+        className="w-6 h-6"
       />
-      <Text className="text-xs">{name}</Text>
+      <Text className="text-white text-xs">{name}</Text>
     </View>
   );
 }
@@ -21,13 +21,20 @@ function TabIcon({ icon, color, name, focused }) {
 const TabsLayout = () => {
   return (
     <Tabs
-      screenListeners={{ focus: () => {} }}
+      // tabBar={() => <Text>HEy</Text>}
+      // sceneContainerStyle={{paddi}}
+
+       screenListeners={{ focus: () => {} }}
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#ffa001",
+      
         tabBarInactiveTintColor: "#cdcde0",
+        
         tabBarStyle: {
           backgroundColor: "#161622",
+        
+          height: 60,
         },
       }}
     >
@@ -104,6 +111,10 @@ const TabsLayout = () => {
         options={{
           title: "Shaddu",
           headerShown: false,
+          // tabBarStyle={{display: "none"}}
+          // tabBarStyle: { backgroundColor: "red", height: 80 },
+          // tabBarItemStyle:{height: 300},
+
           tabBarIcon({ color, focused, size }) {
             return (
               <TabIcon
