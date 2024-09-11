@@ -69,6 +69,8 @@ export default function FilePicker(props: Props) {
         className="rounded-xl w-screen"
         source={{ uri: media }}
         style={{ height: 200 }}
+
+        // resizeMode="contain"
       />
     );
   }
