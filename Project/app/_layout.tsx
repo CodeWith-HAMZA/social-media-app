@@ -5,6 +5,9 @@ import { Redirect, Slot, SplashScreen, Stack, router } from "expo-router";
 import { useFonts } from "expo-font";
 import { AuthProvider, useAuth } from "@/context/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
+import { store } from "../feature/store";
+
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
@@ -44,16 +47,21 @@ const GuestLayout = () => {
 
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Stack className="bg-black">
+        <Provider store={store}>
+        <Stack>
           {/* <Stack.Screen name="index" options={{title : "hamza"}} /> */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="wish" options={{ headerShown: false }} />
+          <Stack.Screen name="checkout" options={{ headerShown: false }} />
           <Stack.Screen
             name="search/[query]"
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="products/[id]" options={{  headerShown: false }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
+        </Provider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -8,3 +8,4 @@ export interface Video {
   creator: User;
   prompt: string;
 }
+ 

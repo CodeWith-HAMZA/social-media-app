@@ -1,101 +1,113 @@
 import {
-  ActivityIndicator,
-  FlatList,
+  Alert,
   Image,
-  RefreshControl,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "@/context/AuthProvider";
+import React from "react";
 import { images } from "@/constants";
-import { useQuery } from "@tanstack/react-query";
-import { getUserPosts } from "@/lib/appwrite/services/posts";
-import Trending from "@/components/shared/Trending";
-import EmptyListState from "@/components/shared/EmptyListState";
-import VideoCard from "@/components/cards/VideoCard";
+import CartItem from "@/components/cards/CartItem";
+import { useAuth } from "@/context/AuthProvider";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useRouter } from "expo-router";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase/config";
+import Modal from "@/components/Modal";
+import { toast } from "@/lib/utils";
 
-const Profile = () => {
-  const { IsLoggedIn, user } = useAuth();
-  const [IsRefreshing, setIsRefreshing] = useState(false);
-  const currentUser = user?.documents.at(0);
-
-  const {
-    data: posts,
-    isFetched,
-    isLoading: loading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["userPosts"],
-    queryFn: () => getUserPosts(currentUser?.$id as string),
-  });
-  async function onRefresh() {
-    setIsRefreshing(true);
-    await refetch();
-
-    // api-call for latest data
-    setIsRefreshing(false);
-  }
-
+const ProfileScreen = () => {
+  const { user } = useAuth();
+  const router = useRouter();
   return (
-    <SafeAreaView className="bg-black w-full min-h-full">
-      <View className=" flex-row w-full justify-end p-4 ">
-        <Text className="text-white text-lg">Logout</Text>
-      </View>
+    <SafeAreaView className="h-[105%] py-8">
+      <ScrollView>
+        <View className="flex-row px-4 justify-between items-center">
+          <View>
+            <MaterialIcons
+              name="arrow-back"
+              size={24}
+              onPress={() => router.back()}
+              color="black"
+            />
+          </View>
 
-      {/* <Trending posts={data} /> */}
-      <FlatList
-        data={posts}
-        renderItem={({ item }) => <VideoCard post={item} />}
-        keyExtractor={(item) => item.$id}
-        ListHeaderComponent={
-          <View className="flex my-6 px-4 space-y-6">
-            <View className="items-center">
-              <View className="items-center border-red-50">
-                <Image
-                  source={{ uri: currentUser?.avatar }}
-                  className="h-32 rounded-2xl mb-4 w-32"
-                  resizeMode="contain"
-                />
-                <Text className="text-2xl text-white font-bold">
-{currentUser?.username}
+          <Text className="text-center text-[36px] font-semibold my-8">
+            Profile
+          </Text>
+          <View>
+            {/* <Modal/> */}
+            <Text
+              onPress={async () => {
+                const res = await signOut(auth);
+                console.log(res, ' logging....out')
+
+                toast("Logging Out");
+                router.replace('sign-in')
+              }}
+              className="text-lg"
+            >
+              Logout
+            </Text>
+          </View>
+        </View>
+
+        <View className="border-2  border-[#E6E6E6] flex-row items-center p-2 justify-between rounded-lg mx-4">
+          <View className="flex-1">
+            <Text className="text-lg font-semibold">Hi, {user?.email}</Text>
+            <View className="flex-row items-center">
+              <Text className="text-gray-400">Email Verification: </Text>
+              <View>
+                <Text
+                  className={`${
+                    user?.emailVerified
+                      ? "bg-green-400"
+                      : "bg-red-500 border border-red-300"
+                  } text-xs px-2 text-white py-1 rounded-full `}
+                >
+                  {user?.emailVerified ? "Verified" : "Not Verified"}
                 </Text>
-              </View>
-              <View className="flex-row gap-7 mt-5">
-                <View className="items-center">
-                  <Text className="text-white font-bold text-2xl">{posts?.length}</Text>
-                  <Text className="text-gray-400 text-lg">Posts</Text>
-                </View>
-                <View className="items-center">
-                  <Text className="text-white font-bold text-2xl">10.2K</Text>
-                  <Text className="text-gray-400 text-lg">Views</Text>
-                </View>
               </View>
             </View>
           </View>
-        }
-        ListFooterComponent={<View></View>}
-        ListEmptyComponent={() => {
-          if (isFetched && !loading)
-            return (
-              <EmptyListState
-                title="No Videos Found"
-                subtitle="No Videos Created Yet!"
-                busy={IsRefreshing}
-              />
-            );
-        }}
-        refreshControl={
-          <RefreshControl onRefresh={onRefresh} refreshing={IsRefreshing} />
-        }
-      />
+          <View className="">
+            <Image source={images.thumbnail} className="w-20 h-20 rounded-lg" />
+          </View>
+        </View>
+        <View className="mt-6 px-4">
+          <Text className="font-bold text-lg">Shipping Address</Text>
+          <View className="mt-4 border-2 py-1 border-[#E6E6E6] rounded-lg px-2">
+            <View className="flex flex-row justify-between">
+              <Text className="text-lg">Pakistan</Text>
+              <Text className="text-md text-[#0066FF] font-semibold">
+                Change
+              </Text>
+            </View>
+            <Text className="w-[70%] mt-2 mb-3 ">
+              House no ***street***cetuhuw theue ueutheuthf
+            </Text>
+          </View>
+        </View>
+        <View className="mt-4 px-4">
+          <Text className="font-bold text-lg">Payment Methods</Text>
+          <Image
+            source={images.paymentMethods}
+            className="w-full h-20 mt-4"
+            resizeMode="contain"
+          />
+        </View>
+
+        <View className="mt-4 px-4">
+          <Text className="font-bold text-lg">Order History</Text>
+          {/* <CartItem /> */}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Profile;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({});

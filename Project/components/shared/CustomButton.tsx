@@ -30,15 +30,15 @@ const CustomButton = ({
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
-      className={`bg-secondary-100 flex   flex-row py-2 justify-center items-center mt-12 w-full rounded-lg ${
+      className={`bg-[#0066FF] flex flex-row py-2 justify-center items-center mt-4 rounded-lg ${
         isDisabled ? "opacity-50" : ""
       } ${containerStyles}`}
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.8}
     >
-      <View className="flex-row  items-center">
-        <Text className={`font-bold text-lg ${textStyles}`}>{title}</Text>
+      <View className="flex-row items-center">
+        <Text className={`font-[500] text-white text-lg ${textStyles}`}>{title}</Text>
         {icon ? (
           <Image
             source={icon as ImageSourcePropType}

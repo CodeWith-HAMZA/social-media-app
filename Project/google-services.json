@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "603385208467",
+    "project_id": "eccomerce-mobile-app",
+    "storage_bucket": "eccomerce-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603385208467:android:c16d74d1795b6ce68ef766",
+        "android_client_info": {
+          "package_name": "com.hamzamohohoh.arora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6bwmrH4NJYuyT75L3IeDnOIITq3ju-Ko"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

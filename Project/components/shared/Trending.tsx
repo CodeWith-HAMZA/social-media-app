@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import EmptyListState from "./EmptyListState";
 import { Video } from "@/models/video.model";
 import * as Animatable from "react-native-animatable";
-import { icons } from "@/constants";
+import { icons, images } from "@/constants";
 import { Video as VideoPlayer, ResizeMode } from "expo-av";
 const zoomIn = {
   0: {
@@ -24,10 +24,10 @@ const zoomIn = {
 };
 const zoomOut = {
   0: {
-    scale: 0.94,
+    scale: 0.9,
   },
   1: {
-    scale: 0.87,
+    scale: 0.9, 
   },
 };
 
@@ -44,40 +44,24 @@ function TrendingItem({
       duration={300}
       animation={activeItem?.$id === post?.$id ? zoomIn : zoomOut}
     >
-      {Play ? (
-        <VideoPlayer
-          source={{
-            uri: post.video || "",
-          }}
-          resizeMode={ResizeMode.STRETCH}
-          useNativeControls
-          shouldPlay
-          onPlaybackStatusUpdate={(status) => {
-            if (status?.didJustFinish) {
-              setPlay(false);
-            }
-          }}
-          className="w-48 h-72 rounded-2xl bg-white/10"
+      <TouchableOpacity
+        className="relative w-full justify-center rounded-2xl items-center"
+        activeOpacity={0.7}
+        onPress={() => {
+          setPlay(true);
+        }}
+      >  
+        <Image
+          className="w-24 h-24 rounded-full border-2"
+          source={images.thumbnail}
         />
-      ) : (
-        <TouchableOpacity
-          className="relative h-80 w-full justify-center rounded-2xl items-center"
-          activeOpacity={0.7}
-          onPress={() => {
-            setPlay(true);
-          }}
-        >
-          <Image
-            className="w-48 h-72 rounded-2xl border-2"
-            source={{ uri: post.thumbnail }}
-          />
-          <Image
-            resizeMode="contain"
-            className="w-12 border-2 h-12 absolute rounded-xl"
-            source={icons.play}
-          />
-        </TouchableOpacity>
-      )}
+        {/* <Image
+          resizeMode="contain"
+          className="w-12 border-2 h-12 absolute rounded-xl"
+          source={icons.play}
+        /> */}
+        <Text>{post?.title}</Text>
+      </TouchableOpacity>
     </Animatable.View>
   );
 }

@@ -1,9 +1,12 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import { Tabs, Redirect } from "expo-router";
-
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { icons } from "@/constants";
-
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+import Octicons from "@expo/vector-icons/Octicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 function TabIcon({ icon, color, name, focused }) {
   return (
     <View className="items-center justify-center gap-1">
@@ -13,7 +16,7 @@ function TabIcon({ icon, color, name, focused }) {
         tintColor={color}
         className="w-6 h-6"
       />
-      <Text className="text-white text-xs">{name}</Text>
+      <Text className="text-xs">{name}</Text>
     </View>
   );
 }
@@ -24,17 +27,17 @@ const TabsLayout = () => {
       // tabBar={() => <Text>HEy</Text>}
       // sceneContainerStyle={{paddi}}
 
-       screenListeners={{ focus: () => {} }}
+      screenListeners={{ focus: () => {} }}
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#ffa001",
-      
+        // tabBarActiveTintColor: "#ffa001",
+
         tabBarInactiveTintColor: "#cdcde0",
-        
+
         tabBarStyle: {
-          backgroundColor: "#161622",
-        
-          height: 60,
+          backgroundColor: "#fff",
+
+          height: 70,
         },
       }}
     >
@@ -45,12 +48,13 @@ const TabsLayout = () => {
           headerShown: false,
           tabBarIcon({ color, focused, size }) {
             return (
-              <TabIcon
-                icon={icons.home}
-                color={color}
-                name={"Home"}
-                focused={focused}
-              />
+              <View
+                className={`rounded-full px-4 py-1 ${
+                  focused && "bg-[#0066FF]/10"
+                }`}
+              >
+                <Octicons name="home" size={24} color="#0066FF" />
+              </View>
             );
           },
         }}
@@ -62,12 +66,16 @@ const TabsLayout = () => {
           headerShown: false,
           tabBarIcon({ color, focused, size }) {
             return (
-              <TabIcon
-                icon={icons.bookmark}
-                color={color}
-                name={"Bookmark"}
-                focused={focused}
-              />
+              <View className="">
+                    {/* <Text>{3}</Text> */}
+                <View
+                  className={`rounded-full px-4 py-1 ${
+                    focused && "bg-[#0066FF]/10"
+                  }`}
+                >
+                  <AntDesign name="shoppingcart" size={27} color="#0066FF" />
+                </View>
+              </View>
             );
           },
         }}
@@ -79,12 +87,13 @@ const TabsLayout = () => {
           headerShown: false,
           tabBarIcon({ color, focused, size }) {
             return (
-              <TabIcon
-                icon={icons.plus}
-                color={color}
-                name={"Create"}
-                focused={focused}
-              />
+              <View
+                className={`rounded-full px-4 py-1 ${
+                  focused && "bg-[#0066FF]/10"
+                }`}
+              >
+                <Feather name="bell" size={27} color="#0066FF" />
+              </View>
             );
           },
         }}
@@ -96,18 +105,25 @@ const TabsLayout = () => {
           headerShown: false,
           tabBarIcon({ color, focused, size }) {
             return (
-              <TabIcon
-                icon={icons.profile}
-                color={color}
-                name={"Profile"}
-                focused={focused}
-              />
+              <View
+                className={`rounded-full px-4 py-1 ${
+                  focused && "bg-[#0066FF]/10"
+                }`}
+              >
+                <FontAwesome5
+                  name="user-circle"
+                  className="bg-gray-300"
+                  size={26}
+                  color="#0066FF"
+                />
+              </View>
             );
           },
         }}
       />
-      <Tabs.Screen
-        name="shaddu"
+      {/* <Tabs.Screen
+        name="sh
+        u"
         options={{
           title: "Shaddu",
           headerShown: false,
@@ -126,7 +142,7 @@ const TabsLayout = () => {
             );
           },
         }}
-      />
+      /> */}
     </Tabs>
   );
 };

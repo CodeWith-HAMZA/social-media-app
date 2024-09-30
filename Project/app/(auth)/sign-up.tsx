@@ -1,103 +1,170 @@
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  ToastAndroid,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ToastAndroid, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native-gesture-handler";
-import { images } from "@/constants";
-import { SignUpForm } from "@/types/forms";
 import FormField from "@/components/shared/forms/FormField";
 import CustomButton from "@/components/shared/CustomButton";
-import { Link } from "@react-navigation/native";
-import { registerUser } from "@/lib/appwrite/services/users";
+import CustomSecondaryButton from "@/components/shared/CustomSecondaryButton";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/config";
+import { router } from "expo-router";
 import { toast } from "@/lib/utils";
+import { icons } from "@/constants";
 
 const SignUp = () => {
-  const [form, setForm] = useState<SignUpForm>({
-    username: "",
+  const [form, setForm] = useState({
     email: "",
     password: "",
+    cpassword: "",
   });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const [Busy, setBusy] = useState(false);
-
-  async function handleRegister() {
-    if (!form.username || !form.email || !form.password) {
-      return  Alert.alert("Error", "All Fields Are Required");
+  const validate = () => {
+    const newErrors = {};
+    if (!form.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Invalid email";
     }
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!form.cpassword) {
+      newErrors.cpassword = "Confirm password is required";
+    } else if (form.cpassword !== form.password) {
+      newErrors.cpassword = "Passwords must match";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Returns true if no errors
+  };
 
-    setBusy(true);
+  const handleSignUp = async () => {
+    if (!validate()) return; // Validate before proceeding
+
     try {
-      const res = await registerUser(form.email, form.password, form.username);
+      setLoading(true);
+      const user = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
+
+      setLoading(false);
+      toast(`Welcome ${form.email}, You're Successfully Registered`);
+      // router.replace("/home");
+      ToastAndroid.show("Registered Successfully", ToastAndroid.SHORT);
     } catch (error) {
       Alert.alert("Something Went Wrong", error.message);
-    } finally {
-      setBusy(false);
     }
-
-    toast("Successfully Registered Your Account");
-  }
+  };
 
   return (
-    <SafeAreaView className="bg-primary h-full flex flex-row justify-center ">
-      <View className="w-full h-full gap-8 mt-8 px-4 py-6">
-        <Image
-          source={images.logo}
-          resizeMode="contain"
-          className="w-[115px]  h-[35px]"
-        />
-        <Text className="text-white font-bold text-2xl">Sign Up To Arora</Text>
+    <SafeAreaView className="h-full flex flex-row justify-center">
+      <View className="w-full h-full gap-8 mt-0 px-4 py-8">
+        <Text className="font-bold text-center text-[#263BED] text-3xl">
+          Shoppy Logo
+        </Text>
 
-        <View>
-          <FormField
-            handleTextChange={(value) => {
-              setForm((_) => ({ ..._, username: value }));
-            }}
-            title="Username"
-            placeholder="Enter Username"
-          />
-        </View>
-        <View>
-          <FormField
-            handleTextChange={(value) => {
-              setForm((_) => ({ ..._, email: value }));
-            }}
-            title="Email"
-            placeholder="Enter Email"
-          />
-        </View>
+        <View className="flex-col gap-y-3">
+          <View className="w-full">
+            <FormField
+              handleTextChange={(value) =>
+                setForm((prev) => ({ ...prev, email: value }))
+              }
+              onBlur={() => validate()}
+              titleStyles="mt-0"
+              title="Email"
+              placeholder="Enter your phone or email"
+              value={form.email}
+            />
+            {errors.email && (
+              <Text className="text-red-500">{errors.email}</Text>
+            )}
+          </View>
 
-        <View>
-          <FormField
-            handleTextChange={(value) => {
-              setForm((_) => ({ ..._, password: value }));
-            }}
-            title="Password"
-            placeholder="Enter Password"
-          />
-        </View>
+          <View>
+            <FormField
+              handleTextChange={(value) =>
+                setForm((prev) => ({ ...prev, password: value }))
+              }
+              onBlur={() => validate()}
+              titleStyles="mt-0"
+              title="Password"
+              placeholder="Enter Password"
+              secure
+              value={form.password}
+            />
+            {errors.password && (
+              <Text className="text-red-500">{errors.password}</Text>
+            )}
+          </View>
 
-        <View className="border-2">
+          <View>
+            <FormField
+              handleTextChange={(value) =>
+                setForm((prev) => ({ ...prev, cpassword: value }))
+              }
+              onBlur={() => validate()}
+              title="Confirm Password"
+              placeholder="Confirm Password"
+              titleStyles="mt-0"
+              secure
+              value={form.cpassword}
+            />
+            {errors.cpassword && (
+              <Text className="text-red-500">{errors.cpassword}</Text>
+            )}
+          </View>
+
           <CustomButton
-            onPress={handleRegister}
-            isDisabled={Busy}
-            title="Register"
-            containerStyles="mt-0"
+            onPress={handleSignUp}
+            isDisabled={loading}
+            isLoading={loading} 
+            // icon={icons.}
+            title="Sign Up"
           />
-        </View>
-
-        <View className="flex-row justify-center gap-x-3">
-          <Text className="text-gray-600">Already Have An Account</Text>
-          <Link to={"/sign-in"}>
-            <Text className="text-secondary underline">Sign In</Text>
-          </Link>
+          <CustomSecondaryButton
+            containerStyles="mt-7 "
+            onPress={async () => {
+              console.log(form);
+              try {
+                await loginUser(form.email, form.password);
+                router.replace("/home");
+                showToast();
+              } catch (error) {
+                Alert.alert("Something Went Wrong", error.message);
+              }
+            }}
+            isDisabled={false}
+            title="Continue With Google"
+          />
+          <CustomSecondaryButton
+            onPress={async () => {
+              console.log(form);
+              try {
+                await loginUser(form.email, form.password);
+                router.replace("/home");
+                showToast();
+              } catch (error) {
+                Alert.alert("Something Went Wrong", error.message);
+              }
+            }}
+            isDisabled={false}
+            title="Continue With Apple"
+          />
+          <View className="flex-row justify-center gap-1">
+            <Text>I already have an account?</Text>
+            <Text
+              onPress={() => {
+                router.push("sign-in");
+              }}
+              className="text-[#0066FF] font-bold"
+            >
+              Sign in
+            </Text>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -105,4 +172,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
- 
